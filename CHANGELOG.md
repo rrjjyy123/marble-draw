@@ -1,5 +1,14 @@
 # Changelog
 
+## 구슬 뽑기 (포크)
+
+- 2026-09-20:
+    - lazygyu/roulette 를 포크해 '구슬 뽑기'로 이름을 바꿨습니다.
+
+---
+
+## 원본 (lazygyu/roulette)
+
 - 2025-11-13:
     - Optimized the rendering process.
 - 2025-11-10:

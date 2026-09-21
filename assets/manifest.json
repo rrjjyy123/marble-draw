@@ -1,7 +1,7 @@
 {
-  "name": "Marble roulette",
-  "short_name": "MR",
-  "id": "lazygyu.marble-roulette",
+  "name": "구슬 뽑기",
+  "short_name": "구슬뽑기",
+  "id": "rrjjyy123.marble-draw",
   "icons": [
     {
       "src": "android-icon-36x36.png",
@@ -40,7 +40,7 @@
       "density": "4.0"
     }
   ],
-  "start_url": "https://lazygyu.github.io/roulette",
+  "start_url": "https://rrjjyy123.github.io/marble-draw/",
   "display_override": [
     "fullscreen",
     "minimal-ui"

@@ -1,47 +1,41 @@
-# Marble roulette
+# 구슬 뽑기 (Marble Draw)
 
-This is a lucky draw by dropping marbles.
+구슬을 굴려서 당첨자를 뽑는 교실용 추첨기입니다.
 
-[Demo]( https://lazygyu.github.io/roulette )
+lazygyu 의 [Marble Roulette](https://github.com/lazygyu/roulette) (MIT) 을 포크해서,
+수업 중에 쓰기 좋게 다듬었습니다.
 
-# Requirements
+## 원본과 다른 점
 
-- Typescript
-- Parcel
-- box2d-wasm
+- **광고와 외부 통신이 전혀 없습니다.** 광고 서버, 접속 통계(Google Analytics · umami),
+  외부 이미지 API 호출을 모두 제거했습니다. 첫 로딩 이후 바깥으로 나가는 요청이 없습니다.
+- **맵을 직접 만들 수 있습니다.** 화면 위에서 벽·기둥·회전판을 그려 나만의 코스를 만들고,
+  저장하거나 JSON 파일로 주고받을 수 있습니다.
+- **인터넷 없이 동작합니다.** 한 번 열어두면 오프라인에서도 그대로 씁니다.
+- **수업용 명단 관리.** 반별 명단을 여러 개 저장해두고 전환하거나, 뽑힌 사람을 빼고
+  순차 추첨할 수 있습니다.
+- 기본 UI 언어가 한국어입니다.
 
-# Development
+## 개발
 
 ```shell
-> yarn
-> yarn dev
+npm install
+npm run dev
 ```
 
-# Build
+## 빌드
 
 ```shell
-> yarn build
+npm run build
 ```
 
-# License
+`dist/` 에 정적 파일이 생성됩니다. `main` 에 푸시하면 GitHub Actions 가 GitHub Pages 로
+자동 배포합니다.
 
-The source code is licensed under the [MIT License](./LICENSE).
+## 라이선스
 
-## Trademark
+소스 코드는 [MIT License](./LICENSE) 를 따릅니다.
 
-**"Marble Roulette"™** and **"마블 룰렛"™** are trademarks of lazygyu
-(trademark applications pending in the Republic of Korea).
-
-The MIT License applies to the **source code only**. It does **not** grant any
-right to use these names, or any confusingly similar name, as the name or
-branding of your own project, product, or service.
-
-You may freely fork, modify, and redistribute this code, including for
-commercial purposes, but please publish it under a different name. Nominative
-use — factually referring to this project (e.g. "based on Marble Roulette by
-lazygyu") — is fine.
-
-**"마블 룰렛"™ / "Marble Roulette"™** 은 lazygyu의 상표이며 현재 대한민국
-특허청에 상표 출원 중입니다. 소스 코드는 MIT 라이선스를 따르지만 위 명칭 및
-이에 혼동을 줄 수 있는 유사 명칭은 라이선스 대상이 아닙니다. 포크·수정·재배포는
-자유롭게 하시되 다른 이름을 사용해 주세요.
+원본 프로젝트의 상표 **"마블 룰렛"™ / "Marble Roulette"™** 는 MIT 라이선스 대상이
+아닙니다(대한민국 특허청 상표 출원 중). 이 포크는 그 명칭을 사용하지 않고
+**"구슬 뽑기 / Marble Draw"** 라는 다른 이름으로 배포합니다.

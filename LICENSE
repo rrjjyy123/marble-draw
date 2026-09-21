@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (c) 2022 LazyGyu
+Copyright (c) 2026 rrjjyy123 (fork: 구슬 뽑기 / Marble Draw)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +20,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+이 저장소는 lazygyu 의 Marble Roulette (https://github.com/lazygyu/roulette) 을
+포크한 것입니다. MIT 라이선스는 소스 코드에만 적용되며, 원저작자의 상표
+"마블 룰렛"™ / "Marble Roulette"™ 는 라이선스 대상이 아닙니다. 이 포크는
+"구슬 뽑기 / Marble Draw" 라는 다른 이름을 사용하며, 원저작자의 명칭이나
+브랜드를 사용하지 않습니다.
+
+This repository is a fork of lazygyu's Marble Roulette. The MIT License covers
+the source code only; the trademarks "Marble Roulette"™ / "마블 룰렛"™ are not
+licensed. This fork is distributed under a different name, "Marble Draw",
+and does not use the original project's name or branding.
