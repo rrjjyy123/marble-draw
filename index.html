@@ -233,22 +233,8 @@
 
     document.querySelector('#btnShuffle').click();
 
-    const maps = window.roulette.getMaps();
-    const mapSelector = document.querySelector('#sltMap');
-    maps.forEach((map) => {
-      const option = document.createElement('option');
-      option.value = map.id;
-      option.innerHTML = map.title;
-      option.setAttribute('data-trans', '');
-      window.translateElement(option);
-      mapSelector.append(option);
-    });
-    mapSelector.addEventListener('change', (e) => {
-      window.roulette.setMap(e.target.value);
-      // setMap은 살아남은 구슬에서 이름을 뽑아 재구성한다. 골인한 구슬이 사라지고
-      // 무게(/n)도 날아가므로, 원본인 이름 입력창에서 다시 채운다
-      getReady();
-    });
+    // 맵 선택과 편집기는 src/editor/editorPanel.ts 가 맡는다
+    window.initEditorPanel();
 
     function simpleToast(msg) {
       const toast = document.createElement('div');
@@ -281,6 +267,17 @@
           <span data-trans>Map</span>
         </label>
         <select id="sltMap"></select>
+        <button id="btnEditMap" class="btn-map-tool" title="이 맵을 편집합니다">편집</button>
+      </div>
+      <div class="row row-map-tools">
+        <label></label>
+        <div class="btn-group">
+          <button id="btnNewMap" class="btn-map-tool">새 맵</button>
+          <button id="btnDuplicateMap" class="btn-map-tool">복제</button>
+          <button id="btnDeleteMap" class="btn-map-tool">삭제</button>
+          <button id="btnImportMaps" class="btn-map-tool">가져오기</button>
+          <button id="btnExportMaps" class="btn-map-tool">내보내기</button>
+        </div>
       </div>
       <div class="row row-toggles">
         <div class='toggle-item'>
@@ -342,6 +339,35 @@
     </div>
   </div>
 </div>
+<input type="file" id="mapFileInput" accept="application/json,.json" hidden />
+
+<div id="editor" class="editor hidden">
+  <div class="editor-bar">
+    <div class="editor-tools" id="editorTools"></div>
+    <div class="editor-bar-actions">
+      <label class="editor-snap">
+        <input type="checkbox" id="chkSnap" checked />
+        <span>격자에 맞춤</span>
+      </label>
+      <button id="btnEditorUndo" title="실행 취소 (Ctrl+Z)">되돌리기</button>
+      <button id="btnEditorRedo" title="다시 실행 (Ctrl+Y)">다시</button>
+      <button id="btnEditorFit">전체 보기</button>
+      <button id="btnEditorTest" class="primary">테스트</button>
+      <button id="btnEditorSave" class="primary">저장</button>
+      <button id="btnEditorClose">닫기</button>
+    </div>
+  </div>
+  <div class="editor-panel">
+    <div id="editorProps"></div>
+  </div>
+  <div class="editor-hint" id="editorHint"></div>
+</div>
+
+<div id="editorTestBar" class="editor-test-bar hidden">
+  <span>편집 중인 맵을 테스트하고 있습니다</span>
+  <button id="btnBackToEdit">편집으로 돌아가기</button>
+</div>
+
 <div class="copyright">구슬 뽑기 &mdash;
   <a href="https://github.com/lazygyu/roulette" target="_blank" rel="noopener">lazygyu의 Marble Roulette</a>(MIT) 기반 교실용 포크
 </div>

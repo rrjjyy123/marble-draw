@@ -1,15 +1,20 @@
 /**
  * 렌더링 없이 물리만 돌려보는 시뮬레이션. 게임 루프와 같은 10ms 고정 스텝, Marble 과 같은 배치·정지 판정·shake 를 쓴다.
  *
- *   yarn simulate bench [6,16,30,100,300,1000]   맵별·구슬 수별 골인 시각 분포 (timeScale 1)
- *   yarn simulate stuck [6,16,30]                정지 판정 문턱 기존 vs 수정, timeScale 1 과 0.2 에서 shake 비교
+ *   npm run simulate bench 6,16,30            맵별·구슬 수별 골인 시각 분포 (timeScale 1)
+ *   npm run simulate stuck 6,16               정지 판정 문턱 기존 vs 수정, timeScale 1 과 0.2 에서 shake 비교
+ *   npm run simulate bench 16 my-maps.json    편집기에서 내보낸 맵 파일로 검사
+ *
+ * 맵 파일을 넘기면 기본 맵 대신 그 맵들을 돌린다. 직접 만든 맵에서 구슬이 실제로
+ * 골인까지 가는지, 어디서 갇히는지 렌더링 없이 빠르게 확인할 수 있다.
  *
  * Math.random 을 시드 고정으로 바꿔서 같은 조건이면 같은 궤적이 나온다.
  */
 import * as fs from 'node:fs';
 import Box2DFactory from 'box2d-wasm';
 import { STUCK_DELAY } from '../src/data/constants';
-import { stages } from '../src/data/maps';
+import { spawnOf, validateMap } from '../src/data/mapStore';
+import { type StageDef, stages } from '../src/data/maps';
 import { Box2dPhysics } from '../src/physics-box2d';
 
 const STEP_MS = 10;
@@ -41,7 +46,7 @@ class NodePhysics extends Box2dPhysics {
 }
 
 type Options = {
-  mapIdx: number;
+  stage: StageDef;
   n: number;
   timeScale: number;
   /** 정지 판정에 쓸 lenSq 문턱. 기존 코드는 timeScale 과 무관하게 STUCK_LEN_SQ 고정 */
@@ -59,19 +64,19 @@ type Result = {
   shakesWhileMoving: number;
 };
 
-async function simulate({ mapIdx, n, timeScale, stuckLenSq, seed }: Options): Promise<Result> {
+async function simulate({ stage, n, timeScale, stuckLenSq, seed }: Options): Promise<Result> {
   seedRandom(seed);
-  const stage = stages[mapIdx];
   const p = new NodePhysics();
   await p.init();
   p.createStage(stage);
 
   // Marble 생성자와 같은 배치
+  const spawn = spawnOf(stage);
   const maxLine = Math.ceil(n / 10);
   const lineDelta = -Math.max(0, Math.ceil(maxLine - 5));
   for (let order = 0; order < n; order++) {
     const line = Math.floor(order / 10);
-    p.createMarble(order, 10.25 + (order % 10) * 0.6, maxLine - line + lineDelta);
+    p.createMarble(order, spawn.x + (order % 10) * 0.6, spawn.y + maxLine - line + lineDelta);
   }
   p.start();
 
@@ -125,12 +130,12 @@ function maxInWindow(ts: number[], win: number) {
   return best;
 }
 
-async function bench(ns: number[]) {
+async function bench(ns: number[], targets: StageDef[]) {
   console.log('| 맵 | 구슬 | 첫 골인 | 마지막 골인 | 1초 내 최다 | 5초 내 최다 | 골인 간격 중앙값 | shake | 미완주 |');
   console.log('|---|---:|---:|---:|---:|---:|---:|---:|---:|');
-  for (let m = 0; m < stages.length; m++) {
+  for (const stage of targets) {
     for (const n of ns) {
-      const r = await simulate({ mapIdx: m, n, timeScale: 1, stuckLenSq: STUCK_LEN_SQ, seed: 1 });
+      const r = await simulate({ stage, n, timeScale: 1, stuckLenSq: STUCK_LEN_SQ, seed: 1 });
       const ts = r.goals;
       const gaps = ts.slice(1).map((v, i) => v - ts[i]).sort((a, b) => a - b);
       const median = gaps.length ? gaps[Math.floor(gaps.length / 2)] : 0;
@@ -144,14 +149,14 @@ async function bench(ns: number[]) {
 // 같은 시드·같은 배치에서 정지 판정 문턱만 바꿔 돌린다.
 // timeScale 1 에서는 두 문턱이 같은 값이므로 결과가 완전히 같아야 하고(기존 물리 불변),
 // timeScale 0.2 에서는 기존 문턱이 움직이는 구슬을 튕기는 횟수가 드러나야 한다
-async function stuck(ns: number[]) {
+async function stuck(ns: number[], targets: StageDef[]) {
   console.log(`STUCK_DELAY=${STUCK_DELAY}ms, 정지 속도 기준 ${STUCK_SPEED.toFixed(3)}/s`);
   console.log('| 맵 | 구슬 | timeScale | shake 기존 → 수정 | 움직이는 중 튕김 기존 → 수정 | 마지막 골인 기존 → 수정 | 미완주 기존 → 수정 |');
   console.log('|---|---:|---:|---|---|---|---|');
-  for (let m = 0; m < stages.length; m++) {
+  for (const stage of targets) {
     for (const n of ns) {
       for (const timeScale of [1, 0.2]) {
-        const base = { mapIdx: m, n, timeScale, seed: 1 };
+        const base = { stage, n, timeScale, seed: 1 };
         const old = await simulate({ ...base, stuckLenSq: STUCK_LEN_SQ });
         const fixed = await simulate({ ...base, stuckLenSq: STUCK_LEN_SQ * timeScale * timeScale });
         console.log(
@@ -162,7 +167,21 @@ async function stuck(ns: number[]) {
   }
 }
 
-const [mode = 'bench', arg] = process.argv.slice(2);
-if (mode === 'bench') bench((arg ?? '6,16,30,100,300,1000').split(',').map(Number));
-else if (mode === 'stuck') stuck((arg ?? '6,16,30').split(',').map(Number));
-else console.error('usage: simulate.ts bench [counts] | stuck [counts]');
+/** 편집기에서 내보낸 파일(`{ maps: [...] }`)이나 맵 배열, 맵 하나를 받는다 */
+function loadMaps(path: string): StageDef[] {
+  const parsed = JSON.parse(fs.readFileSync(path, 'utf-8'));
+  const raw: unknown[] = Array.isArray(parsed) ? parsed : (parsed.maps ?? [parsed]);
+  return raw.map((entry, i) => {
+    const { map, errors } = validateMap(entry);
+    if (!map) throw new Error(`${path} 의 ${i + 1}번째 맵을 읽을 수 없습니다: ${errors.join(', ')}`);
+    if (errors.length) console.warn(`[경고] ${map.title}: ${errors.join(', ')}`);
+    return map;
+  });
+}
+
+const [mode = 'bench', arg, mapFile] = process.argv.slice(2);
+const targets = mapFile ? loadMaps(mapFile) : stages;
+
+if (mode === 'bench') bench((arg ?? '6,16,30,100,300,1000').split(',').map(Number), targets);
+else if (mode === 'stuck') stuck((arg ?? '6,16,30').split(',').map(Number), targets);
+else console.error('usage: simulate.ts bench|stuck [counts] [maps.json]');

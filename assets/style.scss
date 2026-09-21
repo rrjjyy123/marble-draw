@@ -486,3 +486,268 @@ div.toast {
 }
 
 
+
+// ---------------------------------------------------------------- 맵 편집기
+
+.btn-map-tool {
+  background: #333;
+  color: #eee;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: #444;
+  }
+
+  &:disabled {
+    opacity: .4;
+    cursor: default;
+  }
+}
+
+.row-map-tools .btn-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.editor {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  // 캔버스로 그림을 그려야 하므로 패널 자체 말고는 포인터를 통과시킨다
+  pointer-events: none;
+  color: #eee;
+  font-size: 14px;
+}
+
+.editor.hidden,
+.editor-test-bar.hidden {
+  display: none;
+}
+
+.editor-bar {
+  pointer-events: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(18, 18, 18, .92);
+  border-bottom: 1px solid #444;
+
+  button {
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: #454545;
+    }
+
+    &:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+
+    &.active {
+      background: #ffd400;
+      border-color: #ffd400;
+      color: #111;
+      font-weight: bold;
+    }
+
+    &.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    &.primary:hover {
+      background: #3b74f0;
+    }
+  }
+}
+
+.editor-tools,
+.editor-bar-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.editor-snap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.editor-panel {
+  pointer-events: auto;
+  position: absolute;
+  top: 64px;
+  right: 12px;
+  width: 290px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  background: rgba(18, 18, 18, .92);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.editor-section {
+  & + .editor-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #444;
+  }
+
+  h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #ffd400;
+  }
+}
+
+.editor-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+
+  span {
+    flex: 1;
+    font-size: 13px;
+    color: #ccc;
+  }
+
+  input {
+    width: 96px;
+    background: #222;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 3px 6px;
+  }
+
+  input[type='checkbox'] {
+    width: auto;
+  }
+
+  input[type='color'] {
+    padding: 0;
+    height: 26px;
+  }
+}
+
+.editor-note {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.editor-inline-btn {
+  margin-top: 6px;
+  background: #333;
+  color: #ccc;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.editor-actions-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+
+  button {
+    flex: 1;
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+
+    &.danger {
+      border-color: #a33;
+      color: #ff9a9a;
+    }
+  }
+}
+
+.editor-hint {
+  pointer-events: none;
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  max-width: min(560px, 60vw);
+  padding: 8px 12px;
+  background: rgba(18, 18, 18, .85);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #bbb;
+}
+
+.editor-test-bar {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 901;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: rgba(37, 99, 235, .95);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+
+  button {
+    background: white;
+    color: #1d4ed8;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .editor-panel {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: 45vh;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .editor-hint {
+    display: none;
+  }
+}

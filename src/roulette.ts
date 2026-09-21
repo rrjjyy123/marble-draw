@@ -2,6 +2,7 @@ import { Camera } from './camera';
 import { canvasHeight, canvasWidth, initialZoom, Skills, Themes, zoomThreshold } from './data/constants';
 import { DEFAULT_SPAWN, getMap, listMaps, spawnOf } from './data/mapStore';
 import type { StageDef } from './data/maps';
+import { MapEditor } from './editor/mapEditor';
 import { FastForwader } from './fastForwader';
 import type { GameObject } from './gameObject';
 import type { IPhysics } from './IPhysics';
@@ -57,6 +58,9 @@ export class Roulette extends EventTarget {
   private _pendingRemovals: number[] = [];
 
   private _uiObjects: UIObject[] = [];
+  /** 편집 모드에서 쓰는 UI. 미니맵·랭킹은 편집을 방해하므로 통째로 갈아끼운다 */
+  private _editorUiObjects: UIObject[] = [];
+  private _editor: MapEditor | null = null;
 
   private _autoRecording: boolean = false;
   private _recorder!: VideoRecorder;
@@ -94,6 +98,18 @@ export class Roulette extends EventTarget {
     return initialZoom * this._camera.zoom;
   }
 
+  private get _activeUiObjects(): UIObject[] {
+    return this._editor ? this._editorUiObjects : this._uiObjects;
+  }
+
+  public get isEditing(): boolean {
+    return this._editor !== null;
+  }
+
+  public get editor(): MapEditor | null {
+    return this._editor;
+  }
+
   private addUiObject(obj: UIObject) {
     this._uiObjects.push(obj);
     if (obj.onWheel) {
@@ -124,19 +140,21 @@ export class Roulette extends EventTarget {
     const interval = (this._updateInterval / 1000) * timeScale;
 
     while (this._elapsed >= this._updateInterval) {
-      this.physics.step(interval);
-      this._updateMarbles(this._updateInterval, timeScale);
-      this._particleManager.update(this._updateInterval);
-      this._updateEffects(this._updateInterval);
+      if (!this._editor) {
+        this.physics.step(interval);
+        this._updateMarbles(this._updateInterval, timeScale);
+        this._particleManager.update(this._updateInterval);
+        this._updateEffects(this._updateInterval);
+      }
       this._elapsed -= this._updateInterval;
-      this._uiObjects.forEach((obj) => obj.update(this._updateInterval));
+      this._activeUiObjects.forEach((obj) => obj.update(this._updateInterval));
     }
 
     if (this._marbles.length > 1) {
       this._marbles.sort((a, b) => b.y - a.y);
     }
 
-    if (this._stage) {
+    if (this._stage && !this._editor) {
       this._camera.update({
         marbles: this._marbles,
         stage: this._stage,
@@ -239,10 +257,11 @@ export class Roulette extends EventTarget {
 
   private _render() {
     if (!this._stage) return;
+    if (this._editor) this._editor.sizeFactor = this._renderer.sizeFactor;
     const renderParams = {
       camera: this._camera,
       stage: this._stage,
-      entities: this.physics.getEntities(),
+      entities: this._editor ? this._editor.entityStates() : this.physics.getEntities(),
       marbles: this._marbles,
       winners: this._winners,
       particleManager: this._particleManager,
@@ -252,7 +271,7 @@ export class Roulette extends EventTarget {
       size: { x: this._renderer.width, y: this._renderer.height },
       theme: this._theme,
     };
-    this._renderer.render(renderParams, this._uiObjects);
+    this._renderer.render(renderParams, this._activeUiObjects);
   }
 
   private async _init() {
@@ -285,7 +304,7 @@ export class Roulette extends EventTarget {
 
     const sizeFactor = this._renderer.sizeFactor;
     const pos = { x: e.offsetX * sizeFactor, y: e.offsetY * sizeFactor };
-    this._uiObjects.forEach((obj) => {
+    this._activeUiObjects.forEach((obj) => {
       if (!obj[handlerName]) return;
       const bounds = obj.getBoundingBox();
       if (!bounds) {
@@ -506,6 +525,43 @@ export class Roulette extends EventTarget {
 
   public getCount() {
     return this._marbles.length;
+  }
+
+  /**
+   * 편집 모드로 들어간다. 넘긴 StageDef 를 그 자리에서 고치므로,
+   * 테스트 실행 후 같은 객체로 다시 들어오면 편집을 이어서 할 수 있다.
+   */
+  public enterEditMode(stage: StageDef): MapEditor {
+    if (this._editor) this.exitEditMode();
+
+    this.clearMarbles();
+    this._clearMap();
+    this._stage = stage;
+    this._camera.lock(true);
+
+    const editor = new MapEditor(stage, this._camera, { x: this._renderer.width, y: this._renderer.height });
+    editor.sizeFactor = this._renderer.sizeFactor;
+    editor.notify = (msg) => this.dispatchEvent(new CustomEvent('message', { detail: msg }));
+
+    this._editor = editor;
+    this._editorUiObjects = [editor];
+    this._renderer.canvas.addEventListener('wheel', editor.onWheel, { passive: false });
+    window.addEventListener('keydown', editor.onKeyDown);
+    editor.focusOnStart();
+    return editor;
+  }
+
+  /** 편집을 끝내고 지금 초안을 그대로 굴릴 수 있는 상태로 되돌린다 */
+  public exitEditMode() {
+    const editor = this._editor;
+    if (!editor) return;
+
+    this._renderer.canvas.removeEventListener('wheel', editor.onWheel);
+    window.removeEventListener('keydown', editor.onKeyDown);
+    this._editor = null;
+    this._editorUiObjects = [];
+    this._camera.lock(false);
+    this.reset();
   }
 
   public getMaps() {

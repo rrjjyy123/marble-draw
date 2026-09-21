@@ -192,6 +192,10 @@ export function importMaps(text: string): ImportResult {
       result.errors.push(`${i + 1}번째 맵: ${errors.join(', ')}`);
       return;
     }
+    // map 이 있어도 errors 가 비어있지 않을 수 있다. 물체 몇 개만 버리고 살린 경우다
+    if (errors.length > 0) {
+      result.errors.push(`${i + 1}번째 맵 "${map.title}": 일부를 버리고 가져왔습니다 — ${errors.join(', ')}`);
+    }
     map.id = newMapId();
     map.title = uniqueTitle(map.title);
     try {
