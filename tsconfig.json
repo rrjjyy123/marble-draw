@@ -115,6 +115,7 @@
     /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src/index.ts"
+    "src/index.ts",
+    "src/types/env.d.ts"
   ]
 }

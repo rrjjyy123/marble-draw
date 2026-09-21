@@ -40,7 +40,11 @@
       "density": "4.0"
     }
   ],
-  "start_url": "https://rrjjyy123.github.io/marble-draw/",
+  "start_url": "../",
+  "scope": "../",
+  "lang": "ko",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "display_override": [
     "fullscreen",
     "minimal-ui"

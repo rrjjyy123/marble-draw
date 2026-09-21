@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "biome check --fix src/",
-    "dev": "parcel index.html --port 1235",
+    "dev": "parcel index.html --port 1235 --dist-dir .parcel-dev",
     "build": "parcel build index.html --public-url /marble-draw/ && node scripts/build-sw.js",
     "simulate": "tsx scripts/simulate.ts"
   },

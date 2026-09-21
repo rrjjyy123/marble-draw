@@ -19,18 +19,27 @@ lazygyu 의 [Marble Roulette](https://github.com/lazygyu/roulette) (MIT) 을 포
 ## 개발
 
 ```shell
-npm install
-npm run dev
+corepack yarn
+corepack yarn dev
 ```
 
 ## 빌드
 
 ```shell
-npm run build
+corepack yarn build
 ```
 
-`dist/` 에 정적 파일이 생성됩니다. `main` 에 푸시하면 GitHub Actions 가 GitHub Pages 로
+`dist/` 에 정적 파일과 오프라인용 `service-worker.js` 가 생성됩니다. `main` 에 푸시하면 GitHub Actions 가 GitHub Pages 로
 자동 배포합니다.
+
+## 직접 만든 맵 검사
+
+편집기에서 내보낸 JSON 파일을 렌더링 없이 물리만 돌려, 구슬이 실제로 골인하는지
+확인할 수 있습니다.
+
+```shell
+corepack yarn simulate bench 6,16,30 내-맵.json
+```
 
 ## 라이선스
 
