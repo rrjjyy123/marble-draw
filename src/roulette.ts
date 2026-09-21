@@ -1,6 +1,7 @@
 import { Camera } from './camera';
 import { canvasHeight, canvasWidth, initialZoom, Skills, Themes, zoomThreshold } from './data/constants';
-import { type StageDef, stages } from './data/maps';
+import { DEFAULT_SPAWN, getMap, listMaps, spawnOf } from './data/mapStore';
+import type { StageDef } from './data/maps';
 import { FastForwader } from './fastForwader';
 import type { GameObject } from './gameObject';
 import type { IPhysics } from './IPhysics';
@@ -274,7 +275,7 @@ export class Roulette extends EventTarget {
     this.addUiObject(minimap);
     this.fastForwarder = this.createFastForwader();
     this.addUiObject(this.fastForwarder);
-    this._stage = stages[0];
+    this._stage = listMaps()[0];
     this._loadMap();
   }
 
@@ -342,7 +343,16 @@ export class Roulette extends EventTarget {
     }
 
     this.physics.createStage(this._stage);
-    this._camera.initializePosition();
+    this._camera.initializePosition(this._initialCameraCenter());
+  }
+
+  /**
+   * 구슬이 없을 때 보여줄 위치. 기본 출발점(10.25, 0)에서 원래 쓰던
+   * (12.95, 2) 가 나오도록 맞춘 값이라, 출발점을 옮긴 맵도 같은 구도로 열린다
+   */
+  private _initialCameraCenter() {
+    const spawn = this._stage ? spawnOf(this._stage) : DEFAULT_SPAWN;
+    return { x: spawn.x + 2.7, y: spawn.y + 2 };
   }
 
   public clearMarbles() {
@@ -450,11 +460,12 @@ export class Roulette extends EventTarget {
         .fill(0)
         .map((_, i) => i)
     );
+    const spawn = this._stage ? spawnOf(this._stage) : DEFAULT_SPAWN;
     members.forEach((member) => {
       if (member) {
         for (let j = 0; j < member.count; j++) {
           const order = orders.pop() || 0;
-          this._marbles.push(new Marble(this.physics, order, totalCount, member.name, member.weight));
+          this._marbles.push(new Marble(this.physics, order, totalCount, member.name, member.weight, spawn));
         }
       }
     });
@@ -464,8 +475,8 @@ export class Roulette extends EventTarget {
       const cols = Math.min(totalCount, 10);
       const rows = Math.ceil(totalCount / 10);
       const lineDelta = -Math.max(0, Math.ceil(rows - 5));
-      const centerX = 10.25 + (cols - 1) * 0.3;
-      const centerY = (1 + rows) / 2 + lineDelta;
+      const centerX = spawn.x + (cols - 1) * 0.3;
+      const centerY = spawn.y + (1 + rows) / 2 + lineDelta;
 
       const spawnWidth = Math.max((cols - 1) * 0.6, 1);
       const spawnHeight = Math.max(rows - 1, 1);
@@ -498,29 +509,22 @@ export class Roulette extends EventTarget {
   }
 
   public getMaps() {
-    return stages.map((stage, index) => {
-      return {
-        index,
-        title: stage.title,
-      };
-    });
+    return listMaps().map((stage) => ({ id: stage.id, title: stage.title }));
   }
 
   public getCurrentMap() {
     if (!this._stage) return null;
-    return {
-      index: stages.indexOf(this._stage),
-      title: this._stage.title,
-    };
+    return { id: this._stage.id, title: this._stage.title };
   }
 
-  public setMap(index: number) {
-    if (index < 0 || index > stages.length - 1) {
-      throw new Error('Incorrect map number');
+  public setMap(id: string) {
+    const stage = getMap(id);
+    if (!stage) {
+      throw new Error(`Unknown map: ${id}`);
     }
     const names = this._marbles.map((marble) => marble.name);
-    this._stage = stages[index];
+    this._stage = stage;
     this.setMarbles(names);
-    this._camera.initializePosition();
+    this._camera.initializePosition(this._initialCameraCenter());
   }
 }

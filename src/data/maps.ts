@@ -1,14 +1,22 @@
 import type { MapEntity } from '../types/MapEntity.type';
+import type { VectorLike } from '../types/VectorLike';
 
 export type StageDef = {
+  /** 기본 맵은 'builtin:' 으로 시작한다. 커스텀 맵은 uuid */
+  id: string;
   title: string;
   entities?: MapEntity[];
+  /** 이 아래로 내려가면 골인 */
   goalY: number;
+  /** 이 근처부터 슬로모션과 줌인이 걸린다 */
   zoomY: number;
+  /** 구슬이 떨어지기 시작하는 위치. 없으면 mapStore.DEFAULT_SPAWN */
+  spawn?: VectorLike;
 };
 
 export const stages: StageDef[] = [
   {
+    id: 'builtin:wheel',
     title: 'Wheel of fortune',
     goalY: 111,
     zoomY: 106.75,
@@ -427,6 +435,7 @@ export const stages: StageDef[] = [
     ],
   },
   {
+    id: 'builtin:bubblepop',
     title: 'BubblePop',
     goalY: 83,
     zoomY: 78,
@@ -888,6 +897,7 @@ export const stages: StageDef[] = [
     ],
   },
   {
+    id: 'builtin:pot',
     title: 'Pot of greed',
     goalY: 91,
     zoomY: 92.5,
@@ -1202,6 +1212,7 @@ export const stages: StageDef[] = [
     ],
   },
   {
+    id: 'builtin:yoru',
     title: 'Yoru ni Kakeru',
     goalY: 248,
     zoomY: 234.5,

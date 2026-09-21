@@ -53,7 +53,14 @@ export class Marble {
     return this.position.angle;
   }
 
-  constructor(physics: IPhysics, order: number, max: number, name?: string, weight: number = 1) {
+  constructor(
+    physics: IPhysics,
+    order: number,
+    max: number,
+    name?: string,
+    weight: number = 1,
+    spawn: VectorLike = { x: 10.25, y: 0 }
+  ) {
     this.name = name || `M${order}`;
     this.weight = weight;
     this.physics = physics;
@@ -69,7 +76,7 @@ export class Marble {
     this.color = `hsl(${this.hue} 100% 70%)`;
     this.id = order;
 
-    physics.createMarble(order, 10.25 + (order % 10) * 0.6, maxLine - line + lineDelta);
+    physics.createMarble(order, spawn.x + (order % 10) * 0.6, spawn.y + maxLine - line + lineDelta);
   }
 
   /**

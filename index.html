@@ -237,7 +237,7 @@
     const mapSelector = document.querySelector('#sltMap');
     maps.forEach((map) => {
       const option = document.createElement('option');
-      option.value = map.index;
+      option.value = map.id;
       option.innerHTML = map.title;
       option.setAttribute('data-trans', '');
       window.translateElement(option);
