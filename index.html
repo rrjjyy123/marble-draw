@@ -58,10 +58,17 @@
 
   function getReady() {
     const names = getNames();
-    window.roulette.setMarbles(names);
-    ready = names.length > 0;
-    localStorage.setItem('mbr_names', names.join(','));
+    try {
+      localStorage.setItem('mbr_names', names.join(','));
+    } catch (e) {
+      // 저장이 막혀 있어도 추첨은 되어야 한다
+    }
+    // 순차 추첨이면 이미 뽑힌 사람을 뺀다. 입력창 원문은 건드리지 않는다
+    const playing = window.classroom ? window.classroom.filterNames(names) : names;
+    window.roulette.setMarbles(playing);
+    ready = playing.length > 0;
     applyWinnerSetting();
+    if (window.classroom) window.classroom.onNamesChanged();
   }
 
   // 구슬 수가 바뀔 때마다 다시 호출된다. 범위 클리핑은 roulette이 하고, 잘린 결과를 input에 되돌려 쓴다.
@@ -185,7 +192,14 @@
     });
 
     document.querySelector('#btnStart').addEventListener('click', () => {
-      if (!ready) return;
+      if (!ready) {
+        // 한 판이 끝난 뒤라면 다시 섞어서 바로 시작한다. 순차 추첨이면 방금 뽑힌 사람이 빠진다
+        getReady();
+        if (!ready) {
+          if (getNames().length > 0) simpleToast('모두 뽑혔습니다. "뽑힌 사람 초기화"를 눌러주세요');
+          return;
+        }
+      }
       document.querySelector('#settings').classList.add('hide');
       window.roulette.start();
     });
@@ -212,8 +226,13 @@
     document.querySelector('#in_rangeStart').addEventListener('change', () => selectWinnerType('multi', 'start'));
     document.querySelector('#in_rangeEnd').addEventListener('change', () => selectWinnerType('multi', 'end'));
 
-    window.roulette.addEventListener('goal', () => {
+    window.roulette.addEventListener('goal', (e) => {
       ready = false;
+      if (window.classroom && !window.roulette.isTestingDraft) {
+        window.classroom.recordResult(e.detail.winners);
+      }
+      // 편집기 테스트 중에는 설정 패널 대신 '편집으로 돌아가기' 막대가 떠 있다
+      if (window.roulette.isTestingDraft) return;
       setTimeout(() => {
         document.querySelector('#settings').classList.remove('hide');
       }, 3000);
@@ -233,8 +252,10 @@
 
     document.querySelector('#btnShuffle').click();
 
-    // 맵 선택과 편집기는 src/editor/editorPanel.ts 가 맡는다
+    // 맵 선택과 편집기는 src/editor/editorPanel.ts, 명단 관리는 src/classroom 이 맡는다
     window.initEditorPanel();
+    window.initClassroom();
+    getReady();
 
     function simpleToast(msg) {
       const toast = document.createElement('div');
@@ -261,6 +282,30 @@
       <i class="toggle-arrow">▲</i>
     </button>
     <div class="collapsible-rows collapsed">
+      <div class="row">
+        <label for='sltRoster'>
+          <i class="icon trophy"></i>
+          <span>명단</span>
+        </label>
+        <select id="sltRoster"></select>
+        <button id="btnSaveRoster" class="btn-map-tool" title="지금 입력한 이름들을 명단으로 저장합니다">저장</button>
+        <button id="btnDeleteRoster" class="btn-map-tool">삭제</button>
+      </div>
+      <div class="row">
+        <label for="chkSequential" title="한 번 뽑힌 사람은 다음 추첨에서 빠집니다">
+          <i class="icon shuffle"></i>
+          <span>순차 추첨</span>
+        </label>
+        <input type="checkbox" id="chkSequential" />
+        <span id="drawnStatus" class="drawn-status"></span>
+      </div>
+      <div class="row row-map-tools">
+        <label></label>
+        <div class="btn-group">
+          <button id="btnResetDrawn" class="btn-map-tool">뽑힌 사람 초기화</button>
+          <button id="btnHistory" class="btn-map-tool">추첨 기록</button>
+        </div>
+      </div>
       <div class="row">
         <label for='sltMap'>
           <i class="icon map"></i>
@@ -340,6 +385,16 @@
   </div>
 </div>
 <input type="file" id="mapFileInput" accept="application/json,.json" hidden />
+
+<dialog id="historyDialog" class="history-dialog">
+  <h2>추첨 기록</h2>
+  <div id="historyBody" class="history-body"></div>
+  <div class="history-actions">
+    <button id="btnHistoryCsv">CSV 로 저장</button>
+    <button id="btnHistoryClear" class="danger">기록 모두 지우기</button>
+    <button id="btnHistoryClose">닫기</button>
+  </div>
+</dialog>
 
 <div id="editor" class="editor hidden">
   <div class="editor-bar">

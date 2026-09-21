@@ -61,6 +61,8 @@ export class Roulette extends EventTarget {
   /** 편집 모드에서 쓰는 UI. 미니맵·랭킹은 편집을 방해하므로 통째로 갈아끼운다 */
   private _editorUiObjects: UIObject[] = [];
   private _editor: MapEditor | null = null;
+  /** 편집기의 '테스트' 로 굴리는 중. 이 판의 결과는 추첨 기록에 남기지 않는다 */
+  public isTestingDraft = false;
 
   private _autoRecording: boolean = false;
   private _recorder!: VideoRecorder;

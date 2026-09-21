@@ -142,6 +142,7 @@ export class EditorPanel {
     const id = this.editor.draft.id;
     this.editor = null;
     this.testing = null;
+    this.roulette.isTestingDraft = false;
     this.roulette.exitEditMode();
     this.root.classList.add('hidden');
     this.testBar.classList.add('hidden');
@@ -175,6 +176,7 @@ export class EditorPanel {
     this.root.classList.add('hidden');
     this.testBar.classList.remove('hidden');
     this.testing = draft;
+    this.roulette.isTestingDraft = true;
 
     (window as unknown as { getReady?: () => void }).getReady?.();
     if (this.roulette.getCount() === 0) {
@@ -188,6 +190,7 @@ export class EditorPanel {
     const draft = this.testing;
     if (!draft) return;
     this.testing = null;
+    this.roulette.isTestingDraft = false;
     this.testBar.classList.add('hidden');
     this.root.classList.remove('hidden');
     this.editor = this.roulette.enterEditMode(draft);
