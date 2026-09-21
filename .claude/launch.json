@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "marble-draw",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["parcel", "index.html", "--port", "1237"],
+      "port": 1237,
+      "autoPort": false
+    }
+  ]
+}

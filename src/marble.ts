@@ -133,12 +133,11 @@ export class Marble {
     const viewPortTop = viewPort.y - viewPortHh;
     const viewPortBottom = viewPort.y + viewPortHh;
     const halfSize = this.size / 2;
-    const isOutsideView = (
+    const isOutsideView =
       this.x + halfSize < viewPortLeft ||
       this.x - halfSize > viewPortRight ||
       this.y + halfSize < viewPortTop ||
-      this.y - halfSize > viewPortBottom
-    );
+      this.y - halfSize > viewPortBottom;
     if (!isMinimap && isOutsideView) {
       return;
     }
