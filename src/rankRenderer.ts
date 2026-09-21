@@ -1,3 +1,4 @@
+import { translate } from './localization';
 import type { Marble } from './marble';
 import type { WinnerRange } from './options';
 import type { RenderParameters } from './rouletteRenderer';
@@ -39,7 +40,7 @@ export class RankRenderer implements UIObject {
           })
         );
 
-        tsv.unshift(['Rank', 'Name', 'Winner'].join('\t'));
+        tsv.unshift([translate('Rank'), translate('Name'), translate('Winner')].join('\t'));
 
         navigator.clipboard.writeText(tsv.join('\n')).then(() => {
           if (this.messageHandler) {

@@ -1,3 +1,4 @@
+import { translate } from '../localization';
 import type { Roulette } from '../roulette';
 import { parseName } from '../utils/utils';
 import {
@@ -106,7 +107,8 @@ export class ClassroomPanel {
     const roster = getRoster(this.rosterId);
     const record: DrawRecord = {
       at: new Date().toISOString(),
-      map: this.roulette.getCurrentMap()?.title ?? '',
+      // 기본 맵 제목은 영어 키라서 화면에 보이는 이름으로 바꿔 남긴다
+      map: translate(this.roulette.getCurrentMap()?.title ?? ''),
       roster: roster?.name ?? '',
       winners,
     };

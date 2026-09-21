@@ -2,6 +2,7 @@ import type { Camera } from './camera';
 import { canvasHeight, canvasWidth, initialZoom, Themes, winnerAreaHeight } from './data/constants';
 import type { StageDef } from './data/maps';
 import type { GameObject } from './gameObject';
+import { translate } from './localization';
 import type { Marble } from './marble';
 import { MINIMAP_INSET, MINIMAP_WIDTH } from './minimap';
 import type { WinnerRange } from './options';
@@ -271,13 +272,13 @@ export class RouletteRenderer {
 
     // 확정 전에는 골인한 당첨자만, 확정 후에는 최종 명단(조기 확정분 포함)을 쓴다
     const confirmed = result ?? winners.slice(start, end + 1);
-    const header = `Winners ${confirmed.length} / ${end - start + 1}`;
+    const header = `${translate('Winners')} ${confirmed.length} / ${end - start + 1}`;
 
     // 화면을 넘기면 오래된 쪽을 접는다. 전체 명단은 어차피 중앙 팝업에서 보여준다
     const maxRows = Math.max(1, Math.floor((h * 0.55) / lineHeight) - 2);
     const hidden = Math.max(0, confirmed.length - maxRows);
     const shown = confirmed.slice(hidden);
-    const foldLabel = `+${hidden} more`;
+    const foldLabel = `+${hidden}${translate('more')}`;
 
     ctx.save();
 
@@ -380,7 +381,7 @@ export class RouletteRenderer {
     ctx.textAlign = 'center';
     ctx.fillStyle = theme.winnerText;
     ctx.font = `bold ${lineHeight * 1.1}px sans-serif`;
-    ctx.fillText(`Winners (${winners.length})`, w / 2, panelY + titleHeight / 2);
+    ctx.fillText(`${translate('Winners')} (${winners.length})`, w / 2, panelY + titleHeight / 2);
 
     // 버튼 중심을 팝업 우상단 꼭지점에 맞춰 걸쳐놓는다. 뒤가 비치지 않게 불투명하게 채우되,
     // 검정으로 채우면 다크 테마에서 배경과 같아져 버튼으로 안 보이므로 대비되는 색을 쓴다
@@ -451,11 +452,12 @@ export class RouletteRenderer {
     this.ctx.textAlign = 'right';
     this.ctx.lineWidth = 4;
     const textRightX = marbleCenterX - marbleSize / 2 - 20;
+    const label = translate('Winner');
     if (theme.winnerOutline) {
-      this.ctx.strokeText('Winner', textRightX, this._sceneCanvas.height - 120 + WINNER_TEXT_OFFSET);
+      this.ctx.strokeText(label, textRightX, this._sceneCanvas.height - 120 + WINNER_TEXT_OFFSET);
     }
 
-    this.ctx.fillText('Winner', textRightX, this._sceneCanvas.height - 120 + WINNER_TEXT_OFFSET);
+    this.ctx.fillText(label, textRightX, this._sceneCanvas.height - 120 + WINNER_TEXT_OFFSET);
     this.ctx.font = 'bold 72px sans-serif';
     this.ctx.fillStyle = `hsl(${winner.hue} 100% ${theme.marbleLightness})`;
     if (theme.winnerOutline) {

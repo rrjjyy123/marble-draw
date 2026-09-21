@@ -136,11 +136,11 @@ export function clearHistory(): void {
 }
 
 export function historyToCsv(records: DrawRecord[]): string {
-  const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-  const rows = [['일시', '명단', '맵', '당첨자'].map(escape).join(',')];
+  const quote = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const rows = [['일시', '명단', '맵', '당첨자'].map(quote).join(',')];
   for (const r of records) {
-    rows.push([r.at, r.roster, r.map, r.winners.join(' / ')].map(escape).join(','));
+    rows.push([r.at, r.roster, r.map, r.winners.join(' / ')].map(quote).join(','));
   }
   // 엑셀이 UTF-8 로 열도록 BOM 을 붙인다. 없으면 한글이 깨진다
-  return `﻿${rows.join('\r\n')}`;
+  return `\uFEFF${rows.join('\r\n')}`;
 }
