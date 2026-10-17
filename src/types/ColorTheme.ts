@@ -8,6 +8,8 @@ interface ShapeColor {
 export interface ColorTheme {
   background: string;
   marbleLightness: number;
+  /** 구슬 채도(%). 없으면 100 — 파스텔 테마에서 낮춘다 */
+  marbleSaturation?: number;
   marbleWinningBorder: string;
   skillColor: string;
   coolTimeIndicator: string;

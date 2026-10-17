@@ -171,7 +171,7 @@ export class Marble {
   private _renderNormal(ctx: CanvasRenderingContext2D, zoom: number, outline: boolean, skin?: CanvasImageSource) {
     const hs = this.size / 2;
 
-    ctx.fillStyle = `hsl(${this.hue} 100% ${this.theme.marbleLightness + 25 * Math.min(1, this.impact / 500)}%`;
+    ctx.fillStyle = `hsl(${this.hue} ${this.theme.marbleSaturation ?? 100}% ${this.theme.marbleLightness + 25 * Math.min(1, this.impact / 500)}%`;
 
     // ctx.shadowColor = this.color;
     // ctx.shadowBlur = zoom / 2;

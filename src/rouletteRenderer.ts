@@ -333,7 +333,7 @@ export class RouletteRenderer {
       ctx.fillText(`#${start + hidden + i + 1}`, panelX + pad, y);
 
       ctx.font = nameFont;
-      ctx.fillStyle = `hsl(${marble.hue} 100% ${theme.marbleLightness}%)`;
+      ctx.fillStyle = `hsl(${marble.hue} ${theme.marbleSaturation ?? 100}% ${theme.marbleLightness}%)`;
       ctx.fillText(marble.name, panelX + pad + rankWidth, y);
       ctx.restore();
       y += lineHeight;
@@ -405,7 +405,7 @@ export class RouletteRenderer {
       ctx.fillText(`#${winnerRange.start + i + 1}`, x + rankWidth * 0.8, y);
 
       ctx.textAlign = 'left';
-      ctx.fillStyle = `hsl(${marble.hue} 100% ${theme.marbleLightness}%)`;
+      ctx.fillStyle = `hsl(${marble.hue} ${theme.marbleSaturation ?? 100}% ${theme.marbleLightness}%)`;
       ctx.font = `bold ${lineHeight * 0.75}px sans-serif`;
       ctx.fillText(marble.name, x + rankWidth, y);
       ctx.restore();
@@ -441,7 +441,7 @@ export class RouletteRenderer {
     } else {
       this.ctx.beginPath();
       this.ctx.arc(marbleCenterX, marbleCenterY, marbleSize / 2, 0, Math.PI * 2);
-      this.ctx.fillStyle = `hsl(${winner.hue} 100% ${theme.marbleLightness})`;
+      this.ctx.fillStyle = `hsl(${winner.hue} ${theme.marbleSaturation ?? 100}% ${theme.marbleLightness})`;
       this.ctx.fill();
     }
 
@@ -459,7 +459,7 @@ export class RouletteRenderer {
 
     this.ctx.fillText(label, textRightX, this._sceneCanvas.height - 120 + WINNER_TEXT_OFFSET);
     this.ctx.font = 'bold 72px sans-serif';
-    this.ctx.fillStyle = `hsl(${winner.hue} 100% ${theme.marbleLightness})`;
+    this.ctx.fillStyle = `hsl(${winner.hue} ${theme.marbleSaturation ?? 100}% ${theme.marbleLightness})`;
     if (theme.winnerOutline) {
       this.ctx.strokeText(winner.name, textRightX, this._sceneCanvas.height - 55 + WINNER_TEXT_OFFSET);
     }
