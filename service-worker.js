@@ -1,5 +1,5 @@
 // 자동 생성 파일 — scripts/build-sw.js 를 고칠 것
-const CACHE = "marble-draw-9cb0e653e974";
+const CACHE = "marble-draw-beabba223c3f";
 const PREFIX = "marble-draw-";
 const PRECACHE = [
   "./",
