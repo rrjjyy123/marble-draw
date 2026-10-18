@@ -841,3 +841,162 @@ div.toast {
     }
   }
 }
+
+// ---------------------------------------------------------------- 파스텔 (?theme=pastel)
+// Circle AI 안에 띄울 때 그 앱과 같은 크림 바탕·파스텔 색으로. 색만 바꾸고 배치·크기는 그대로 둔다.
+// 흐림(backdrop-filter) 같은 무거운 효과는 쓰지 않는다 (교실 PC 를 위해)
+
+:root.pastel {
+  --copyright-color: #7d7686;
+  --p-ink: #2b2633;
+  --p-ink-2: #5a5363;
+  --p-ink-3: #7d7686;
+  --p-surface: #fffdf9;
+  --p-surface-2: #f6f0e8;
+  --p-line: rgba(43, 38, 51, 0.12);
+  --p-accent: #b04b27;
+
+  #settings {
+    background: rgba(255, 253, 249, 0.94);
+    border: 1px solid var(--p-line);
+    border-radius: 20px;
+    box-shadow: 0 24px 50px -24px rgba(90, 60, 40, 0.35);
+
+    h3,
+    div.theme,
+    div.right div.row label,
+    div.right div.row.row-range .range-sep {
+      color: var(--p-ink);
+    }
+
+    textarea {
+      background: var(--p-surface-2);
+      color: var(--p-ink);
+      border-radius: 12px;
+      padding: 8px 10px;
+    }
+
+    button,
+    .btn {
+      background: var(--p-ink);
+      color: var(--p-surface);
+      border-radius: 10px;
+    }
+
+    select {
+      background: var(--p-surface-2);
+      color: var(--p-ink);
+      border: 1px solid var(--p-line);
+    }
+
+    input[type='checkbox'] {
+      &:before {
+        background: #e6ded3;
+      }
+
+      &:after {
+        background: white;
+        box-shadow: 0 1px 3px rgba(43, 38, 51, 0.25);
+      }
+
+      &:checked:before {
+        background: var(--p-accent);
+      }
+    }
+
+    .btn-group > * {
+      background: var(--p-surface-2);
+      color: var(--p-ink-2);
+
+      &.active {
+        background: var(--p-ink);
+        color: var(--p-surface);
+      }
+
+      &.active:before {
+        background: var(--p-surface);
+      }
+    }
+  }
+
+  div.toast {
+    background: var(--p-ink);
+    color: var(--p-surface);
+    border-radius: 12px;
+    padding: 8px 14px;
+  }
+
+  .drawn-status {
+    color: var(--p-accent);
+  }
+
+  .btn-map-tool,
+  .editor-bar button,
+  .editor-inline-btn,
+  .editor-actions-row button,
+  .history-actions button {
+    background: var(--p-surface-2);
+    color: var(--p-ink);
+    border-color: var(--p-line);
+  }
+
+  .editor {
+    color: var(--p-ink);
+  }
+
+  .editor-bar,
+  .editor-panel,
+  .editor-hint {
+    background: rgba(255, 253, 249, 0.95);
+    border-color: var(--p-line);
+    color: var(--p-ink-2);
+  }
+
+  .editor-bar button.active {
+    background: #ffe39a;
+    border-color: #e0a43a;
+    color: var(--p-ink);
+  }
+
+  .editor-section h4 {
+    color: var(--p-accent);
+  }
+
+  .editor-field {
+    span {
+      color: var(--p-ink-2);
+    }
+
+    input {
+      background: var(--p-surface);
+      color: var(--p-ink);
+      border-color: var(--p-line);
+    }
+  }
+
+  .history-dialog {
+    background: var(--p-surface);
+    color: var(--p-ink);
+    border-color: var(--p-line);
+
+    &::backdrop {
+      background: rgba(43, 38, 51, 0.35);
+    }
+  }
+
+  .history-table {
+    th {
+      background: var(--p-surface);
+      color: var(--p-ink-3);
+    }
+
+    th,
+    td {
+      border-bottom-color: var(--p-line);
+    }
+
+    td:first-child {
+      color: var(--p-ink-3);
+    }
+  }
+}

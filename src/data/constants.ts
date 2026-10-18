@@ -59,6 +59,41 @@ export const Themes: Record<string, ColorTheme> = {
     winnerOutline: 'black',
     winnerText: '#cccccc',
   },
+  // ?theme=pastel 로 열었을 때 (Circle AI 안에 띄울 때). 크림 바탕에 채도를 낮춘 파스텔, 번짐 효과는 없다
+  pastel: {
+    background: '#FBF7F1',
+    marbleLightness: 72,
+    marbleSaturation: 70,
+    marbleWinningBorder: '#2B2633',
+    skillColor: '#A48CFF',
+    coolTimeIndicator: '#9A93A3',
+    entity: {
+      box: {
+        fill: '#CFC3FA',
+        outline: '#8C75F0',
+        bloom: '#CFC3FA',
+        bloomRadius: 0,
+      },
+      circle: {
+        fill: '#FFE39A',
+        outline: '#E0A43A',
+        bloom: '#FFE39A',
+        bloomRadius: 0,
+      },
+      polyline: {
+        fill: '#FFFFFF',
+        outline: '#B9AFA3',
+        bloom: '#FFFFFF',
+        bloomRadius: 0,
+      },
+    },
+    rankStroke: '#2B2633',
+    minimapBackground: '#FFFDF9',
+    minimapViewport: '#B04B27',
+    winnerBackground: 'rgba(255, 253, 249, 0.75)',
+    winnerOutline: '#2B2633',
+    winnerText: '#5A5363',
+  },
   dark: {
     background: 'black',
     marbleLightness: 75,

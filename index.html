@@ -149,6 +149,15 @@
     const urlParams = new URLSearchParams(window.location.search);
     const namesFromUrl = urlParams.get('names');
 
+    // ?theme=pastel: 다른 앱(Circle AI)에 띄울 때 그 앱처럼 파스텔 색으로 그린다.
+    // 밝게/어둡게 스위치는 파스텔에서 벗어나게 하므로 숨긴다
+    if (urlParams.get('theme') === 'pastel') {
+      document.documentElement.classList.add('pastel');
+      window.roulette.setTheme('pastel');
+      const themeRow = document.querySelector('.row-theme');
+      if (themeRow) themeRow.style.display = 'none';
+    }
+
     if (namesFromUrl) {
       document.querySelector('#in_names').value = namesFromUrl.replace(/,/g, '\n');
     } else {
