@@ -343,6 +343,11 @@ export class Roulette extends EventTarget {
       // @ts-expect-error
       canvas.addEventListener(ev.toLowerCase().replace('mouse', 'pointer'), this.mouseHandler.bind(this, ev));
     });
+    // 미니맵 위에서 곧장 캔버스(또는 iframe) 밖으로 나가거나 터치를 떼면 pointermove 가 더 오지 않아
+    // 미니맵이 잡아 둔 카메라가 풀리지 않는다. 캔버스를 벗어날 때 영역 밖 이동으로 알려 카메라를 구슬에게 돌려준다
+    canvas.addEventListener('pointerleave', () => {
+      this._activeUiObjects.forEach((obj) => obj.onMouseMove?.(undefined));
+    });
     canvas.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
